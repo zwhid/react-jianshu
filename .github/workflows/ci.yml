@@ -1,23 +1,36 @@
 name: GitHub Actions Build and Deploy Demo
+
+# main 分支 push 时触发
 on:
   push:
     branches:
       - main
 jobs:
   build-and-deploy:
+
+    # 环境，最新的 ubuntu 版本
     runs-on: ubuntu-latest
+
+    # 执行步骤
     steps:
+    
+    # 拉取代码到环境，如果用checkout@v2，就要配置 persist
     - name: Checkout
-      uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+      uses: actions/checkout@v2
       with:
         persist-credentials: false
+
+    # 安装依赖和打包
     - name: Install and Build
       run: |
         npm install
         npm run build
+
+    # 部署，这里用了别人写的 action，可以去市场搜这个 action 的实现
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
+        # 仓库设置的key
         ACCESS_TOKEN: ${{ secrets.DEPLOY_KEY }}
         BRANCH: gh-pages
         FOLDER: build
