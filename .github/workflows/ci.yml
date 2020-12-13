@@ -3,13 +3,13 @@ name: Publish to Github Pages
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-deploy:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       # 安装依赖
       - run: npm ci
@@ -25,4 +25,3 @@ jobs:
           PUBLISH_BRANCH: gh-pages
           # 生成文件的目录
           PUBLISH_DIR: ./build
-          
