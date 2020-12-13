@@ -1,23 +1,28 @@
-name: Build and Deploy
-on: [push]
+name: Publish to Github Pages
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  build-deploy:
+    runs-on: ubuntu-18.04
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@master
 
-      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
-        run: |
-          npm install
-          npm run build
+      # 安装依赖
+      - run: npm ci
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@3.7.1
-        with:
-          GITHUB_TOKEN: ${{ secrets.BLOG }}
-          BRANCH: main # The branch the action should deploy to.
-          FOLDER: build # The folder the action should deploy.
+      # 打包
+      - run: npm run build
+
+      # 部署
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v2.5.0
+        env:
+          PERSONAL_TOKEN: ${{ secrets.DEPLOY_KEY }}
+          PUBLISH_BRANCH: gh-pages
+          # 生成文件的目录
+          PUBLISH_DIR: ./build
           
