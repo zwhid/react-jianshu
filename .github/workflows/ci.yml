@@ -1,32 +1,23 @@
-name: Node.js CI
-
+name: GitHub Actions Build and Deploy Demo
 on:
   push:
-    branches: [ main ]
-
+    branches:
+      - main
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    # 拉取代码
-    - uses: actions/checkout@v2
-    
-    # 安装Node.js
-    - name: setup Node.js
-      uses: actions/setup-node@v1
-    
-    # 安装依赖
-    - run: npm install
-
-    # 打包
-    - run: npm run build
-
-    # 部署
+    - name: Checkout
+      uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+      with:
+        persist-credentials: false
+    - name: Install and Build
+      run: |
+        npm install
+        npm run-script build
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v2.5.0
-      env:
-        PERSONAL_TOKEN: ${{ secrets.DEPLOY_KEY }}
-        PUBLISH_BRANCH: gh-pages
-        # 生成文件的目录
-        PUBLISH_DIR: ./build
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        ACCESS_TOKEN: ${{ secrets.DEPLOY_KEY }}
+        BRANCH: gh-pages
+        FOLDER: build
